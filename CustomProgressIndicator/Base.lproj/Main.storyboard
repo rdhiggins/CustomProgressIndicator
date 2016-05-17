@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6211" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6204"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="CustomProgressIndicator" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -15,11 +17,61 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="kAE-UA-TTo">
+                                <rect key="frame" x="40" y="550" width="520" height="30"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0gk-Sf-Tmb">
+                                        <rect key="frame" x="0.0" y="0.0" width="250" height="30"/>
+                                        <state key="normal" title="More"/>
+                                        <connections>
+                                            <action selector="moreProgress:" destination="BYZ-38-t0r" eventType="touchUpInside" id="e2B-Ju-F8n"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E07-IH-C7w">
+                                        <rect key="frame" x="270" y="0.0" width="250" height="30"/>
+                                        <state key="normal" title="Less"/>
+                                        <connections>
+                                            <action selector="lessProgress:" destination="BYZ-38-t0r" eventType="touchUpInside" id="NKR-nl-qcm"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fYC-ts-vBu" customClass="CustomProgressView" customModule="CustomProgressIndicator" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="20" width="600" height="522"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                        <color key="value" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="progress">
+                                        <real key="value" value="0.33000000000000002"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="lineWidth">
+                                        <real key="value" value="40"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="fYC-ts-vBu" secondAttribute="trailing" constant="-20" id="6Yr-fm-V4l"/>
+                            <constraint firstItem="kAE-UA-TTo" firstAttribute="top" secondItem="fYC-ts-vBu" secondAttribute="bottom" constant="8" id="PQi-J3-phU"/>
+                            <constraint firstItem="fYC-ts-vBu" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="20" id="faE-VJ-6D9"/>
+                            <constraint firstItem="fYC-ts-vBu" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-20" id="j8f-XV-k7k"/>
+                            <constraint firstItem="kAE-UA-TTo" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="20" id="nIg-eL-Zbc"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="kAE-UA-TTo" secondAttribute="bottom" constant="20" id="qkH-Jx-xi0"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="kAE-UA-TTo" secondAttribute="trailing" constant="20" id="uEJ-xf-jcU"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="lessButton" destination="E07-IH-C7w" id="BRC-cQ-V8D"/>
+                        <outlet property="moreButton" destination="0gk-Sf-Tmb" id="Lx2-r8-qgT"/>
+                        <outlet property="progressView" destination="fYC-ts-vBu" id="IcO-hA-gH4"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="885" y="659"/>
         </scene>
     </scenes>
 </document>

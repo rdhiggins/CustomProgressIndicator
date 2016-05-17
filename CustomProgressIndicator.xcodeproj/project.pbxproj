@@ -12,6 +12,7 @@
 		7D5E685E1CEB951E00265758 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D5E685C1CEB951E00265758 /* Main.storyboard */; };
 		7D5E68601CEB951E00265758 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D5E685F1CEB951E00265758 /* Assets.xcassets */; };
 		7D5E68631CEB951E00265758 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D5E68611CEB951E00265758 /* LaunchScreen.storyboard */; };
+		7D5E686B1CEB958900265758 /* CustomProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5E686A1CEB958900265758 /* CustomProgressView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		7D5E685F1CEB951E00265758 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7D5E68621CEB951E00265758 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7D5E68641CEB951E00265758 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7D5E686A1CEB958900265758 /* CustomProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomProgressView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 				7D5E685F1CEB951E00265758 /* Assets.xcassets */,
 				7D5E68611CEB951E00265758 /* LaunchScreen.storyboard */,
 				7D5E68641CEB951E00265758 /* Info.plist */,
+				7D5E686A1CEB958900265758 /* CustomProgressView.swift */,
 			);
 			path = CustomProgressIndicator;
 			sourceTree = "<group>";
@@ -137,6 +140,7 @@
 			files = (
 				7D5E685B1CEB951E00265758 /* ViewController.swift in Sources */,
 				7D5E68591CEB951E00265758 /* AppDelegate.swift in Sources */,
+				7D5E686B1CEB958900265758 /* CustomProgressView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
