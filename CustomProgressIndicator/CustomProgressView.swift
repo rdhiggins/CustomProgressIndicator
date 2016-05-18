@@ -42,12 +42,17 @@ class CustomProgressView: UIView {
     @IBInspectable var color: UIColor? {
         didSet {
             circlePathLayer.strokeColor = color?.CGColor
+
+            endCapLayer.strokeColor = color?.CGColor
+            endCapLayer.fillColor = color?.CGColor
+            maskLayer.strokeColor = color?.CGColor
         }
     }
     
     @IBInspectable var lineWidth: CGFloat = 1 {
         didSet {
             circlePathLayer.lineWidth = lineWidth
+            endCapLayer.path = endCapPath().CGPath
         }
     }
     
@@ -58,7 +63,8 @@ class CustomProgressView: UIView {
     }
         
     private let circlePathLayer = CustomShapeLayer()
-    
+    private let endCapLayer = CAShapeLayer()
+    private let maskLayer = CAShapeLayer()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -75,41 +81,73 @@ class CustomProgressView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        circlePathLayer.frame = bounds
+        circlePathLayer.frame = circleRect()
         circlePathLayer.path = circlePath().CGPath
+
+        endCapLayer.frame = circleRect()
+        endCapLayer.path = endCapPath().CGPath
     }
 
     private func setupShapeLayer() {
-        circlePathLayer.frame = bounds
+        let rect = circleRect()
+        circlePathLayer.frame = rect
         circlePathLayer.lineWidth = lineWidth
         circlePathLayer.fillColor = UIColor.clearColor().CGColor
         circlePathLayer.strokeColor = color?.CGColor
         circlePathLayer.lineCap = kCALineCapRound
-        
         layer.addSublayer(circlePathLayer)
+
+        endCapLayer.frame = rect
+        endCapLayer.lineWidth = lineWidth
+        endCapLayer.fillColor = color?.CGColor
+        endCapLayer.strokeColor = color?.CGColor
+        endCapLayer.path = endCapPath().CGPath
+
+        endCapLayer.shadowColor = UIColor.blackColor().CGColor
+        endCapLayer.shadowRadius = 20.0
+        endCapLayer.shadowOpacity = 1.0
+        endCapLayer.transform = CATransform3DRotate(endCapLayer.transform, CGFloat(M_PI_2), 0.0, 0.0, 1.0)
+        layer.addSublayer(endCapLayer)
+
     }
     
     
-    private func circleFrame() -> CGRect {
-        let radius = min(self.center.x, self.center.y)
-        var circleFrame = CGRect(x: 0, y: 0, width: 2 * radius - lineWidth, height: 2 * radius - lineWidth)
-        circleFrame.origin.x = CGRectGetMidX(circlePathLayer.bounds) - CGRectGetMidX(circleFrame)
-        circleFrame.origin.y = CGRectGetMidY(circlePathLayer.bounds) - CGRectGetMidY(circleFrame)
-        
-        return circleFrame
+    private func circleRect() -> CGRect {
+        let radius = min(bounds.width / 2, bounds.height / 2)
+
+        let frame = CGRect(origin: self.center, size: CGSizeZero)
+
+        return CGRectInset(frame, -radius, -radius)
     }
-    
+
+    private func circleRadius() -> CGFloat {
+        let rect = circleRect()
+
+        return min(rect.width, rect.height) / 2.0 - lineWidth
+    }
+
+    private func circleCenter() -> CGPoint {
+        let radius = circleRadius() + lineWidth
+        return CGPointMake(radius, radius)
+    }
     
     private func circlePath() -> UIBezierPath {
-        let frame = circleFrame()
-        let center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame))
-        let radius = frame.width / 2.0 - lineWidth - shadowRadius
-        
         let topAngle: CGFloat = CGFloat(-M_PI_2)
         let endAngle: CGFloat = CGFloat(2 * M_PI - M_PI_2)
-        let path = UIBezierPath(arcCenter: center, radius: radius, startAngle: topAngle, endAngle: endAngle, clockwise: true)
+        let path = UIBezierPath(arcCenter: circleCenter(), radius: circleRadius(), startAngle: topAngle, endAngle: endAngle, clockwise: true)
         
         return path
+    }
+
+
+    private func endCapPath() -> UIBezierPath {
+        let center = circleCenter()
+        let topCenter = CGPointMake(center.x, center.y - circleRadius())
+
+        var rect = CGRect(origin: topCenter, size: CGSizeZero)
+        rect = CGRectInset(rect, -lineWidth / 2, -lineWidth / 2)
+
+        return UIBezierPath(ovalInRect: rect)
     }
 }
 
