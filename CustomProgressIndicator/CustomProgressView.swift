@@ -31,8 +31,6 @@ class CustomProgressView: UIView {
         didSet {
             if progress < 0.0 {
                 progress = 0.0
-            } else if progress > 1.0 {
-                progress = 1.0
             }
             
             updateLayerProgress()
@@ -54,6 +52,8 @@ class CustomProgressView: UIView {
     @IBInspectable var lineWidth: CGFloat = 1 {
         didSet {
             circlePathLayer.lineWidth = lineWidth
+            endCapLayer.shadowOffset = CGSizeMake(lineWidth / 2, 0)
+
             endCapLayer.path = endCapPath().CGPath
             startCapLayer.path = endCapPath().CGPath
         }
@@ -61,7 +61,25 @@ class CustomProgressView: UIView {
     
     @IBInspectable var shadowRadius: CGFloat = 10 {
         didSet {
-            circlePathLayer.shadowRadius = shadowRadius
+            endCapLayer.shadowRadius = shadowRadius
+        }
+    }
+
+    @IBInspectable var shadowOffset: CGSize = CGSizeZero {
+        didSet {
+            endCapLayer.shadowOffset = shadowOffset
+        }
+    }
+
+    @IBInspectable var shadowOpacity: Float = 0.5 {
+        didSet {
+            endCapLayer.shadowOpacity = shadowOpacity
+        }
+    }
+
+    @IBInspectable var shadowColor: UIColor? {
+        didSet {
+            endCapLayer.shadowColor = shadowColor?.CGColor
         }
     }
         
@@ -84,12 +102,6 @@ class CustomProgressView: UIView {
         setupShapeLayers()
     }
     
-    override func prepareForInterfaceBuilder() {
-        super.prepareForInterfaceBuilder()
-        
-//        setupShapeLayers()
-    }
-    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -98,12 +110,15 @@ class CustomProgressView: UIView {
     }
 
     private func updateLayerProgress() {
-        circlePathLayer.strokeEnd = progress
-        
+        if progress > 1.0 {
+            circlePathLayer.strokeEnd = 1.0
+        } else {
+            circlePathLayer.strokeEnd = progress
+        }
 
-        let angle: CGFloat = CGFloat(M_PI * 2.0) * progress
-        
-        let rotate = CATransform3DMakeRotation(angle, 0, 0, 1)
+        let delta: CGFloat = CGFloat(M_PI * 2.0) * progress - oldAngle
+        let rotate = CATransform3DRotate(endCapLayer.transform, delta, 0, 0, 1)
+        oldAngle += delta
         
         endCapLayer.transform = rotate
     }
@@ -114,14 +129,10 @@ class CustomProgressView: UIView {
         setupStartCapLayer(frame)
         setupCircleLayer(frame)
         setupEndCapLayer(frame)
-        
-        reframeLayers(frame)
     }
     
     private func setupCircleLayer(frame: CGRect) {
         setupShapeLayer(circlePathLayer, frame: frame)
-//        circlePathLayer.lineCap = kCALineCapRound
-        
         layer.addSublayer(circlePathLayer)
     }
     
@@ -135,37 +146,27 @@ class CustomProgressView: UIView {
         setupShapeLayer(endCapLayer, frame: frame)
         
         endCapLayer.shadowColor = UIColor.blackColor().CGColor
-        endCapLayer.shadowRadius = 20.0
-        endCapLayer.shadowOpacity = 1.0
+        endCapLayer.shadowRadius = lineWidth
+        endCapLayer.shadowOpacity = 0.6
+        endCapLayer.shadowOffset = CGSizeMake(lineWidth, 0)
         
         layer.addSublayer(endCapLayer)
     }
     
     private func reframeLayers(frame: CGRect) {
-        reframeStartCapLayer(frame)
-        reframeCirclePathLayer(frame)
-        reframeEndCapLayer(frame)
-    }
-    
-    private func reframeStartCapLayer(frame: CGRect) {
-        startCapLayer.bounds = CGRect(origin: CGPointZero, size: frame.size)
-        startCapLayer.position = CGPoint(x: CGRectGetMidX(bounds), y: CGRectGetMidY(bounds))
-        
+        reframeLayer(startCapLayer, frame: frame)
         startCapLayer.path = endCapPath().CGPath
-    }
-    
-    private func reframeCirclePathLayer(frame: CGRect) {
-        circlePathLayer.bounds = CGRect(origin: CGPointZero, size: frame.size)
-        circlePathLayer.position = CGPoint(x: CGRectGetMidX(bounds), y: CGRectGetMidY(bounds))
-        
+
+        reframeLayer(circlePathLayer, frame: frame)
         circlePathLayer.path = circlePath().CGPath
-    }
-    
-    private func reframeEndCapLayer(frame: CGRect) {
-        endCapLayer.bounds = CGRect(origin: CGPointZero, size: frame.size)
-        endCapLayer.position = CGPoint(x: CGRectGetMidX(bounds), y: CGRectGetMidY(bounds))
-        
+
+        reframeLayer(endCapLayer, frame: frame)
         endCapLayer.path = endCapPath().CGPath
+    }
+
+    private func reframeLayer(layer: CAShapeLayer, frame: CGRect) {
+        layer.bounds = CGRect(origin: CGPointZero, size: frame.size)
+        layer.position = CGPoint(x: CGRectGetMidX(bounds), y: CGRectGetMidY(bounds))
     }
     
     private func setupShapeLayer(shapeLayer: CAShapeLayer, frame: CGRect) {
@@ -200,17 +201,18 @@ class CustomProgressView: UIView {
         return path
     }
 
-
     private func endCapPath() -> UIBezierPath {
         let c = circleCenter()
         let capCenter = CGPointMake(c.x, c.y - circleRadius())
 
         var rect = CGRect(origin: capCenter, size: CGSizeZero)
-        rect = CGRectInset(rect, -lineWidth / 2, -lineWidth / 2)
+        rect = CGRectInset(rect, -lineWidth / 2 + 1, -lineWidth / 2 + 1)
         
         return UIBezierPath(ovalInRect: rect)
     }
 }
+
+
 
 
 private class CustomShapeLayer: CAShapeLayer {
