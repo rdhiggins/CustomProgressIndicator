@@ -24,6 +24,50 @@
 
 import UIKit
 
+
+private class ClockwiseRotationShapeLayer: CAShapeLayer {
+    var fromAngle: CGFloat = 0
+    var toAngle: CGFloat = 0
+    var fromStrokeEnd: CGFloat = 0
+    var toStrokeEnd: CGFloat = 0
+
+    private override func actionForKey(event: String) -> CAAction? {
+
+        if event == "transform" {
+            let ba = CABasicAnimation(keyPath: "transform.rotation.z")
+            ba.fromValue = fromAngle
+            ba.toValue = toAngle
+            ba.duration = 2.0
+            ba.cumulative = false
+            ba.removedOnCompletion = true
+            ba.fillMode = kCAFillModeBackwards
+            ba.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+
+            return ba
+        } else if event == "strokeEnd" {
+            print("from=\(fromStrokeEnd) to=\(toStrokeEnd)")
+
+            let ba = CABasicAnimation(keyPath: event)
+            ba.fromValue = fromStrokeEnd
+            ba.toValue = toStrokeEnd
+            ba.duration = 2.0
+            ba.cumulative = false
+            ba.removedOnCompletion = true
+            ba.fillMode = kCAFillModeBackwards
+            ba.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+
+            return ba
+//            let action = super.actionForKey(event)
+//            print("event #=\(action)")
+//            return action
+        }
+
+        print("event=\(event)")
+        return super.actionForKey(event)
+    }
+}
+
+
 @IBDesignable
 class CustomProgressView: UIView {
     
@@ -40,20 +84,14 @@ class CustomProgressView: UIView {
     @IBInspectable var color: UIColor? {
         didSet {
             circlePathLayer.strokeColor = color?.CGColor
-
-            endCapLayer.strokeColor = color?.CGColor
             endCapLayer.fillColor = color?.CGColor
-            startCapLayer.strokeColor = color?.CGColor
             startCapLayer.fillColor = color?.CGColor
-            maskLayer.strokeColor = color?.CGColor
         }
     }
     
     @IBInspectable var lineWidth: CGFloat = 1 {
         didSet {
             circlePathLayer.lineWidth = lineWidth
-            endCapLayer.shadowOffset = CGSizeMake(lineWidth / 2, 0)
-
             endCapLayer.path = endCapPath().CGPath
             startCapLayer.path = endCapPath().CGPath
         }
@@ -83,22 +121,24 @@ class CustomProgressView: UIView {
         }
     }
         
-    private let circlePathLayer = CustomShapeLayer()
-    private let endCapLayer = CAShapeLayer()
-    private let maskLayer = CAShapeLayer()
+    private let circlePathLayer = ClockwiseRotationShapeLayer()
+    private let endCapLayer = ClockwiseRotationShapeLayer()
     private let startCapLayer = CAShapeLayer()
     
     private var oldAngle: CGFloat = 0
+    private var oldProgress: CGFloat = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        circlePathLayer.strokeEnd = 0.0
         setupShapeLayers()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        
+
+        circlePathLayer.strokeEnd = 0.0
         setupShapeLayers()
     }
     
@@ -110,49 +150,53 @@ class CustomProgressView: UIView {
     }
 
     private func updateLayerProgress() {
+        print("before=\(circlePathLayer.strokeEnd)")
+        circlePathLayer.fromStrokeEnd = circlePathLayer.strokeEnd
+
         if progress > 1.0 {
+            circlePathLayer.toStrokeEnd = 1.0
             circlePathLayer.strokeEnd = 1.0
         } else {
+            circlePathLayer.toStrokeEnd = progress
             circlePathLayer.strokeEnd = progress
         }
+
+        print("after=\(circlePathLayer.strokeEnd)")
+
+        endCapLayer.fromAngle = oldAngle
 
         let delta: CGFloat = CGFloat(M_PI * 2.0) * progress - oldAngle
         let rotate = CATransform3DRotate(endCapLayer.transform, delta, 0, 0, 1)
         oldAngle += delta
-        
+
+        endCapLayer.toAngle = oldAngle
+
         endCapLayer.transform = rotate
     }
         
     private func setupShapeLayers() {
         let frame = circleFrame()
-        
-        setupStartCapLayer(frame)
-        setupCircleLayer(frame)
-        setupEndCapLayer(frame)
-    }
-    
-    private func setupCircleLayer(frame: CGRect) {
-        setupShapeLayer(circlePathLayer, frame: frame)
-        layer.addSublayer(circlePathLayer)
-    }
-    
-    private func setupStartCapLayer(frame: CGRect) {
+
         setupShapeLayer(startCapLayer, frame: frame)
-        
-        layer.addSublayer(startCapLayer)
-    }
-    
-    private func setupEndCapLayer(frame: CGRect) {
+
+        setupShapeLayer(circlePathLayer, frame: frame)
+        circlePathLayer.lineWidth = lineWidth
+
         setupShapeLayer(endCapLayer, frame: frame)
-        
         endCapLayer.shadowColor = UIColor.blackColor().CGColor
         endCapLayer.shadowRadius = lineWidth
         endCapLayer.shadowOpacity = 0.6
         endCapLayer.shadowOffset = CGSizeMake(lineWidth, 0)
-        
-        layer.addSublayer(endCapLayer)
     }
-    
+
+
+    private func setupShapeLayer(shapeLayer: CAShapeLayer, frame: CGRect) {
+        shapeLayer.fillColor = UIColor.clearColor().CGColor
+        shapeLayer.strokeColor = color?.CGColor
+
+        layer.addSublayer(shapeLayer)
+    }
+
     private func reframeLayers(frame: CGRect) {
         reframeLayer(startCapLayer, frame: frame)
         startCapLayer.path = endCapPath().CGPath
@@ -167,12 +211,6 @@ class CustomProgressView: UIView {
     private func reframeLayer(layer: CAShapeLayer, frame: CGRect) {
         layer.bounds = CGRect(origin: CGPointZero, size: frame.size)
         layer.position = CGPoint(x: CGRectGetMidX(bounds), y: CGRectGetMidY(bounds))
-    }
-    
-    private func setupShapeLayer(shapeLayer: CAShapeLayer, frame: CGRect) {
-        shapeLayer.lineWidth = lineWidth
-        shapeLayer.fillColor = UIColor.clearColor().CGColor
-        shapeLayer.strokeColor = color?.CGColor
     }
     
     private func circleFrame() -> CGRect {
@@ -206,26 +244,17 @@ class CustomProgressView: UIView {
         let capCenter = CGPointMake(c.x, c.y - circleRadius())
 
         var rect = CGRect(origin: capCenter, size: CGSizeZero)
-        rect = CGRectInset(rect, -lineWidth / 2 + 1, -lineWidth / 2 + 1)
+        rect = CGRectInset(rect, -lineWidth / 2, -lineWidth / 2)
         
         return UIBezierPath(ovalInRect: rect)
     }
-}
 
+    override func actionForLayer(layer: CALayer, forKey event: String) -> CAAction? {
+        print("event=\(event)")
 
-
-
-private class CustomShapeLayer: CAShapeLayer {
-    
-    private override func actionForKey(event: String) -> CAAction? {
-//        if event == "strokeEnd" {
-//            let animation = CABasicAnimation(keyPath: event)
-//            animation.duration = 1.0
-//            animation.timingFunction = CAMediaTimingFunction(name:  kCAMediaTimingFunctionEaseInEaseOut)
-//            
-//            return animation
-//        } else {
-            return super.actionForKey(event)
-//        }
+        return nil
     }
 }
+
+
+

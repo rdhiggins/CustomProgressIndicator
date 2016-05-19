@@ -43,7 +43,7 @@ class ViewController: UIViewController {
 
 
     @IBAction func moreProgress(sender: UIButton) {
-        progressView.progress += 0.10
+        progressView.progress += 0.75
     }
     
     @IBAction func lessProgress(sender: UIButton) {
