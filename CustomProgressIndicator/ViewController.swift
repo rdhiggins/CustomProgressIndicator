@@ -41,13 +41,12 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-
     @IBAction func moreProgress(sender: UIButton) {
-        progressView.progress += 2.0
+        progressView.progress += 0.1
     }
     
     @IBAction func lessProgress(sender: UIButton) {
-        progressView.progress -= 2.0
+        progressView.progress -= 0.1
     }
 }
 
