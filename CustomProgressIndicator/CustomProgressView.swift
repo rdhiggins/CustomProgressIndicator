@@ -24,50 +24,6 @@
 
 import UIKit
 
-
-private class ClockwiseRotationShapeLayer: CAShapeLayer {
-    var fromAngle: CGFloat = 0
-    var toAngle: CGFloat = 0
-    var fromStrokeEnd: CGFloat = 0
-    var toStrokeEnd: CGFloat = 0
-
-    private override func actionForKey(event: String) -> CAAction? {
-
-        if event == "transform" {
-            let ba = CABasicAnimation(keyPath: "transform.rotation.z")
-            ba.fromValue = fromAngle
-            ba.toValue = toAngle
-            ba.duration = 2.0
-            ba.cumulative = false
-            ba.removedOnCompletion = true
-            ba.fillMode = kCAFillModeBackwards
-            ba.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-
-            return ba
-        } else if event == "strokeEnd" {
-            print("from=\(fromStrokeEnd) to=\(toStrokeEnd)")
-
-            let ba = CABasicAnimation(keyPath: event)
-            ba.fromValue = fromStrokeEnd
-            ba.toValue = toStrokeEnd
-            ba.duration = 2.0
-            ba.cumulative = false
-            ba.removedOnCompletion = true
-            ba.fillMode = kCAFillModeBackwards
-            ba.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-
-            return ba
-//            let action = super.actionForKey(event)
-//            print("event #=\(action)")
-//            return action
-        }
-
-        print("event=\(event)")
-        return super.actionForKey(event)
-    }
-}
-
-
 @IBDesignable
 class CustomProgressView: UIView {
     
@@ -120,9 +76,16 @@ class CustomProgressView: UIView {
             endCapLayer.shadowColor = shadowColor?.CGColor
         }
     }
+    
+    @IBInspectable var rotationDuration: Float = 0.5 {
+        didSet {
+//            endCapLayer.rotationDuration = rotationDuration
+//            circlePathLayer.rotationDuration = rotationDuration
+        }
+    }
         
-    private let circlePathLayer = ClockwiseRotationShapeLayer()
-    private let endCapLayer = ClockwiseRotationShapeLayer()
+    private let circlePathLayer = CAShapeLayer()
+    private let endCapLayer = CAShapeLayer()
     private let startCapLayer = CAShapeLayer()
     
     private var oldAngle: CGFloat = 0
@@ -150,28 +113,34 @@ class CustomProgressView: UIView {
     }
 
     private func updateLayerProgress() {
-        print("before=\(circlePathLayer.strokeEnd)")
-        circlePathLayer.fromStrokeEnd = circlePathLayer.strokeEnd
+        var fromStroke: CGFloat
+        var toStroke: CGFloat
+        var fromAngle: CGFloat
+        var toAngle: CGFloat
+        
+        fromStroke = circlePathLayer.strokeEnd
 
         if progress > 1.0 {
-            circlePathLayer.toStrokeEnd = 1.0
+            toStroke = 1.0
             circlePathLayer.strokeEnd = 1.0
         } else {
-            circlePathLayer.toStrokeEnd = progress
+            toStroke = progress
             circlePathLayer.strokeEnd = progress
         }
 
-        print("after=\(circlePathLayer.strokeEnd)")
-
-        endCapLayer.fromAngle = oldAngle
+        fromAngle = oldAngle
 
         let delta: CGFloat = CGFloat(M_PI * 2.0) * progress - oldAngle
         let rotate = CATransform3DRotate(endCapLayer.transform, delta, 0, 0, 1)
-        oldAngle += delta
+        toAngle = oldAngle + delta
 
-        endCapLayer.toAngle = oldAngle
-
+        
         endCapLayer.transform = rotate
+
+        endCapLayer.addAnimation(endCapAnimation(fromAngle, toAngle: toAngle), forKey: "transform.rotation.z")
+        circlePathLayer.addAnimation(circleAnimation(fromStroke, toStroke: toStroke, fromAngle: fromAngle, toAngle: toAngle), forKey: "strokeEnd")
+        
+        oldAngle = toAngle
     }
         
     private func setupShapeLayers() {
@@ -248,12 +217,70 @@ class CustomProgressView: UIView {
         
         return UIBezierPath(ovalInRect: rect)
     }
+}
 
-    override func actionForLayer(layer: CALayer, forKey event: String) -> CAAction? {
-        print("event=\(event)")
 
-        return nil
+
+
+extension CustomProgressView {
+    
+    private func circleAnimation(fromStroke: CGFloat, toStroke: CGFloat, fromAngle: CGFloat, toAngle: CGFloat) -> CABasicAnimation {
+        let ba = CABasicAnimation(keyPath: "strokeEnd")
+        ba.fromValue = fromStroke
+        ba.toValue = toStroke
+        ba.duration = arcRotationDuration(fromStroke, toStroke: toStroke)
+        ba.beginTime = arcBeginTime(fromStroke, toStroke: toStroke, fromAngle: fromAngle, toAngle: toAngle)
+        ba.cumulative = false
+        ba.removedOnCompletion = true
+        ba.fillMode = kCAFillModeBackwards
+        
+        return ba
     }
+    
+    private func endCapAnimation(fromAngle: CGFloat, toAngle: CGFloat) -> CABasicAnimation {
+        let ba = CABasicAnimation(keyPath: "transform.rotation.z")
+        ba.fromValue = fromAngle
+        ba.toValue = toAngle
+        ba.duration = angleRotationDuration(fromAngle, toAngle: toAngle)
+        ba.cumulative = false
+        ba.removedOnCompletion = true
+        ba.fillMode = kCAFillModeBackwards
+        
+        return ba
+    }
+    
+    private func angleRotationDuration(fromAngle: CGFloat, toAngle: CGFloat) -> CFTimeInterval {
+        let deltaAngle = abs(toAngle - fromAngle)
+        let numberRotations = deltaAngle / CGFloat(2 * M_PI)
+        let time = CGFloat(rotationDuration) * numberRotations
+        
+        return CFTimeInterval(time)
+    }
+    
+    private func arcRotationDuration(fromStroke: CGFloat, toStroke: CGFloat) -> CFTimeInterval {
+        let delta = abs(toStroke - fromStroke)
+        let time = CGFloat(rotationDuration) * delta
+        
+        return CFTimeInterval(time)
+    }
+    
+    private func arcBeginTime(fromStroke: CGFloat, toStroke: CGFloat, fromAngle: CGFloat, toAngle: CGFloat) -> CFTimeInterval {
+        let delta = toStroke - fromStroke
+        let time = CGFloat(rotationDuration) * abs(delta)
+        
+        // Positive delta means we are rotating clockwise so we
+        // need to start right away
+        if delta > 0.0 {
+            return 0
+        }
+        
+        // Rotating counter-clockwise, so we want to delay until
+        // the end cap unwraps to the last loop
+        let delay = angleRotationDuration(fromAngle, toAngle: toAngle) - CFTimeInterval(time)
+        
+        return CACurrentMediaTime() + delay
+    }
+    
 }
 
 
