@@ -62,7 +62,7 @@
                                         <color key="value" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="rotationDuration">
-                                        <real key="value" value="2"/>
+                                        <real key="value" value="1.5"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
