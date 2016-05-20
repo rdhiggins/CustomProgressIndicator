@@ -27,7 +27,9 @@ import UIKit
 @IBDesignable
 class CustomProgressView: UIView {
     
-    
+    /// The amount of progress to show.  A complete rotation is indicated with a 1.
+    /// Progress is not limited to values between 0 and 1.  Each complete rotation
+    /// is an addition 1 added on.  Progress can not go below zero.
     @IBInspectable var progress: CGFloat = 0 {
         didSet {
             if progress < 0.0 {
@@ -37,7 +39,9 @@ class CustomProgressView: UIView {
             updateLayerProgress()
         }
     }
-    
+
+
+    /// This property contains the color of the progress indicator.
     @IBInspectable var color: UIColor? {
         didSet {
             arcLayer.strokeColor = color?.CGColor
@@ -45,7 +49,10 @@ class CustomProgressView: UIView {
             startLayer.fillColor = color?.CGColor
         }
     }
-    
+
+
+    /// This property contains the width of the line to use
+    /// on the property indicator.
     @IBInspectable var lineWidth: CGFloat = 1 {
         didSet {
             arcLayer.lineWidth = lineWidth
@@ -53,43 +60,63 @@ class CustomProgressView: UIView {
             startLayer.path = endCapPath().CGPath
         }
     }
-    
+
+
+    /// The radius of the end cap shadow is controlled through
+    /// this property.
     @IBInspectable var shadowRadius: CGFloat = 10 {
         didSet {
             endLayer.shadowRadius = shadowRadius
         }
     }
 
+
+    /// The shadow offset of the end cap is controller with this
+    /// property.
     @IBInspectable var shadowOffset: CGSize = CGSizeZero {
         didSet {
             endLayer.shadowOffset = shadowOffset
         }
     }
 
+
+    /// The shadow opacity of the end cap is controller with this
+    /// property.
     @IBInspectable var shadowOpacity: Float = 0.5 {
         didSet {
             endLayer.shadowOpacity = shadowOpacity
         }
     }
 
+
+    /// The color of the shadow on the end cap.
     @IBInspectable var shadowColor: UIColor? {
         didSet {
             endLayer.shadowColor = shadowColor?.CGColor
         }
     }
+
+
+    /// This property contains the animation duration for
+    /// one compete rotation.
+    ///
+    /// Note: Setting this property to too fast of a
+    /// duration can lead to the end cap animation and the
+    /// arc animation to get out of sync.
+    @IBInspectable var rotationDuration: Float = 2.0
     
-    @IBInspectable var rotationDuration: Float = 0.5
     
     
-    
-    
+    // private properties for the three layers that we use
     private let arcLayer = CAShapeLayer()
     private let endLayer = CAShapeLayer()
     private let startLayer = CAShapeLayer()
-    
+
+
+    // private properties used to store old angle value to
+    // help with determining the animations
     private var oldAngle: CGFloat = 0
-    private var oldProgress: CGFloat = 0
-    
+
     
     
     override init(frame: CGRect) {
