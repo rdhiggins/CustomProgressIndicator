@@ -160,13 +160,13 @@ class CustomProgressView: UIView {
 
         let rotate = CATransform3DRotate(endLayer.transform, delta, 0, 0, 1)
 
-        // Set the animation for the pending actions
-        endLayer.addAnimation(endCapAnimation(fromAngle, toAngle: toAngle), forKey: "transform.rotation.z")
-        arcLayer.addAnimation(circleAnimation(fromStroke, toStroke: toStroke, fromAngle: fromAngle, toAngle: toAngle), forKey: "strokeEnd")
-
         // Make the new setting together
         arcLayer.strokeEnd = toStroke
         endLayer.transform = rotate
+
+        // Set the animation for the pending actions
+        endLayer.addAnimation(endCapAnimation(fromAngle, toAngle: toAngle), forKey: "transform.rotation.z")
+        arcLayer.addAnimation(circleAnimation(fromStroke, toStroke: toStroke, fromAngle: fromAngle, toAngle: toAngle), forKey: "strokeEnd")
 
         // Save the angle for the next time...
         oldAngle = toAngle
@@ -318,7 +318,9 @@ extension CustomProgressView {
         ba.cumulative = false
         ba.removedOnCompletion = true
         ba.fillMode = kCAFillModeBackwards
-        
+
+        print("arcDuration=\(ba.duration)")
+
         return ba
     }
 
@@ -337,7 +339,9 @@ extension CustomProgressView {
         ba.cumulative = false
         ba.removedOnCompletion = true
         ba.fillMode = kCAFillModeBackwards
-        
+
+        print("angleDuration=\(ba.duration)")
+
         return ba
     }
 
@@ -393,7 +397,7 @@ extension CustomProgressView {
         // the end cap unwraps to the last loop
         let delay = angleRotationDuration(fromAngle, toAngle: toAngle) - CFTimeInterval(time)
         
-        return CACurrentMediaTime() + delay
+        return delay + CACurrentMediaTime()
     }
     
 }
