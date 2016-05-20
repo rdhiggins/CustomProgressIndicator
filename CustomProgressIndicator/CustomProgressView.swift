@@ -150,33 +150,25 @@ class CustomProgressView: UIView {
     /// A private method that is called to perform the actual steps in updating
     /// the progress indicators.
     private func updateLayerProgress() {
-        var fromStroke: CGFloat
-        var toStroke: CGFloat
-        var fromAngle: CGFloat
-        var toAngle: CGFloat
-        
-        fromStroke = arcLayer.strokeEnd
+        let fromStroke = arcLayer.strokeEnd
+        let toStroke = min(progress, 1.0)
+        let fromAngle = oldAngle
 
-        if progress > 1.0 {
-            toStroke = 1.0
-            arcLayer.strokeEnd = 1.0
-        } else {
-            toStroke = progress
-            arcLayer.strokeEnd = progress
-        }
-
-        fromAngle = oldAngle
-
+        // Calcuate the rotation angle...
         let delta: CGFloat = CGFloat(M_PI * 2.0) * progress - oldAngle
+        let toAngle = oldAngle + delta
+
         let rotate = CATransform3DRotate(endLayer.transform, delta, 0, 0, 1)
-        toAngle = oldAngle + delta
 
-        
-        endLayer.transform = rotate
-
+        // Set the animation for the pending actions
         endLayer.addAnimation(endCapAnimation(fromAngle, toAngle: toAngle), forKey: "transform.rotation.z")
         arcLayer.addAnimation(circleAnimation(fromStroke, toStroke: toStroke, fromAngle: fromAngle, toAngle: toAngle), forKey: "strokeEnd")
-        
+
+        // Make the new setting together
+        arcLayer.strokeEnd = toStroke
+        endLayer.transform = rotate
+
+        // Save the angle for the next time...
         oldAngle = toAngle
     }
     
