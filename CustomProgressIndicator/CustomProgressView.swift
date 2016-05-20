@@ -306,7 +306,17 @@ class CustomProgressView: UIView {
 
 
 extension CustomProgressView {
-    
+
+
+    /// A private method used to generate the animation for the arc to show
+    /// the main progress.  The angle values are used to derive the correct
+    /// duration and begin time of the animation.
+    ///
+    /// - parameter fromStroke: The current value of the strokeEnd CAShapeLayer property
+    /// - parameter toStroke: What new new setting of the strokeEnd CAShapeLayer property
+    /// - parameter fromAngle: The starting angle in radians
+    /// - parameter toAngle: The ending angle in radians.  Can be more then 2*pie in change.
+    /// - return: A CABasicAnimation properly setup for the desired changes.
     private func circleAnimation(fromStroke: CGFloat, toStroke: CGFloat, fromAngle: CGFloat, toAngle: CGFloat) -> CABasicAnimation {
         let ba = CABasicAnimation(keyPath: "strokeEnd")
         ba.fromValue = fromStroke
@@ -319,7 +329,14 @@ extension CustomProgressView {
         
         return ba
     }
-    
+
+
+    /// A private method used to generate the animation for the end cap that rotates
+    /// through the desired number of rotations.
+    ///
+    /// - parameter fromAngle: The starting angle in radians
+    /// - parameter toAngle: The ending angle in radians.  Can be more then 2*pie in change.
+    /// - return: A CABasicAnimation properly setup for the desired changes.
     private func endCapAnimation(fromAngle: CGFloat, toAngle: CGFloat) -> CABasicAnimation {
         let ba = CABasicAnimation(keyPath: "transform.rotation.z")
         ba.fromValue = fromAngle
@@ -331,7 +348,14 @@ extension CustomProgressView {
         
         return ba
     }
-    
+
+
+    /// A private method used to calculate the proper duration of the end cap
+    /// animation.
+    ///
+    /// - parameter fromAngle: The starting angle in radians
+    /// - parameter toAngle: The ending angle in radians.  Can be more then 2*pie in change.
+    /// - return: The CFTimeInterval to be used for the animation
     private func angleRotationDuration(fromAngle: CGFloat, toAngle: CGFloat) -> CFTimeInterval {
         let deltaAngle = abs(toAngle - fromAngle)
         let numberRotations = deltaAngle / CGFloat(2 * M_PI)
@@ -339,14 +363,30 @@ extension CustomProgressView {
         
         return CFTimeInterval(time)
     }
-    
+
+
+    /// A private method used to calculate the proper animation duration for the
+    /// arc animation.
+    ///
+    /// - parameter fromStroke: The current value of the strokeEnd CAShapeLayer property
+    /// - parameter toStroke: What new new setting of the strokeEnd CAShapeLayer property
+    /// - return: The CFTimeInterval to be used for the animation
     private func arcRotationDuration(fromStroke: CGFloat, toStroke: CGFloat) -> CFTimeInterval {
         let delta = abs(toStroke - fromStroke)
         let time = CGFloat(rotationDuration) * delta
         
         return CFTimeInterval(time)
     }
-    
+
+
+    /// A private method used to calculate the proper media time to start the
+    /// arc animation
+    ///
+    /// - parameter fromStroke: The current value of the strokeEnd CAShapeLayer property
+    /// - parameter toStroke: What new new setting of the strokeEnd CAShapeLayer property
+    /// - parameter fromAngle: The starting angle in radians
+    /// - parameter toAngle: The ending angle in radians.  Can be more then 2*pie in change.
+    /// - return: The upcoming media time to start this animation
     private func arcBeginTime(fromStroke: CGFloat, toStroke: CGFloat, fromAngle: CGFloat, toAngle: CGFloat) -> CFTimeInterval {
         let delta = toStroke - fromStroke
         let time = CGFloat(rotationDuration) * abs(delta)
