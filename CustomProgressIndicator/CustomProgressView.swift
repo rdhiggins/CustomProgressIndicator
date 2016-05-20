@@ -319,8 +319,6 @@ extension CustomProgressView {
         ba.removedOnCompletion = true
         ba.fillMode = kCAFillModeBackwards
 
-        print("arcDuration=\(ba.duration)")
-
         return ba
     }
 
@@ -339,8 +337,6 @@ extension CustomProgressView {
         ba.cumulative = false
         ba.removedOnCompletion = true
         ba.fillMode = kCAFillModeBackwards
-
-        print("angleDuration=\(ba.duration)")
 
         return ba
     }
@@ -396,7 +392,7 @@ extension CustomProgressView {
         // Rotating counter-clockwise, so we want to delay until
         // the end cap unwraps to the last loop
         let delay = angleRotationDuration(fromAngle, toAngle: toAngle) - CFTimeInterval(time)
-        
+
         return delay + CACurrentMediaTime()
     }
     
