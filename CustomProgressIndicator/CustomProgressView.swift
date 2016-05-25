@@ -27,6 +27,15 @@ import UIKit
 @IBDesignable
 class CustomProgressView: UIView {
     
+    /// This property specifies the maximum number of rotations that the view
+    /// supports
+    @IBInspectable var numberRotations: CGFloat = 10.0 {
+        didSet {
+            arcLayer.path = circlePath().CGPath
+        }
+    }
+    
+    
     /// The amount of progress to show.  A complete rotation is indicated with a 1.
     /// Progress is not limited to values between 0 and 1.  Each complete rotation
     /// is an addition 1 added on.  Progress can not go below zero.
@@ -106,6 +115,9 @@ class CustomProgressView: UIView {
     @IBInspectable var rotationDuration: Float = 2.0
     
     
+    /// This property specifies the animation delay
+    @IBInspectable var animationDelay: CFTimeInterval = 0.25
+    
     
     // private properties for the three layers that we use
     private let arcLayer = CAShapeLayer()
@@ -151,7 +163,7 @@ class CustomProgressView: UIView {
     /// the progress indicators.
     private func updateLayerProgress() {
         let fromStroke = arcLayer.strokeEnd
-        let toStroke = min(progress, 1.0)
+        let toStroke = progress / numberRotations
         let fromAngle = oldAngle
 
         // Calcuate the rotation angle...
@@ -183,7 +195,8 @@ class CustomProgressView: UIView {
 
         setupShapeLayer(arcLayer, frame: frame)
         arcLayer.lineWidth = lineWidth
-
+        arcLayer.lineCap = kCALineCapRound
+        
         setupShapeLayer(endLayer, frame: frame)
         endLayer.shadowColor = UIColor.blackColor().CGColor
         endLayer.shadowRadius = lineWidth
@@ -272,7 +285,7 @@ class CustomProgressView: UIView {
     /// radius, and lineWidth.
     private func circlePath() -> UIBezierPath {
         let topAngle: CGFloat = CGFloat(-M_PI_2)
-        let endAngle: CGFloat = CGFloat(2 * M_PI - M_PI_2)
+        let endAngle: CGFloat = CGFloat(2 * M_PI) * numberRotations - CGFloat(M_PI_2)
         let path = UIBezierPath(arcCenter: circleCenter(), radius: circleRadius(), startAngle: topAngle, endAngle: endAngle, clockwise: true)
         
         return path
@@ -313,11 +326,12 @@ extension CustomProgressView {
         let ba = CABasicAnimation(keyPath: "strokeEnd")
         ba.fromValue = fromStroke
         ba.toValue = toStroke
-        ba.duration = arcRotationDuration(fromStroke, toStroke: toStroke)
-        ba.beginTime = arcBeginTime(fromStroke, toStroke: toStroke, fromAngle: fromAngle, toAngle: toAngle)
+        ba.duration = angleRotationDuration(fromAngle, toAngle: toAngle)
+        ba.beginTime = CACurrentMediaTime() + animationDelay
         ba.cumulative = false
         ba.removedOnCompletion = true
         ba.fillMode = kCAFillModeBackwards
+        ba.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
 
         return ba
     }
@@ -334,9 +348,11 @@ extension CustomProgressView {
         ba.fromValue = fromAngle
         ba.toValue = toAngle
         ba.duration = angleRotationDuration(fromAngle, toAngle: toAngle)
+        ba.beginTime = CACurrentMediaTime() + animationDelay
         ba.cumulative = false
         ba.removedOnCompletion = true
         ba.fillMode = kCAFillModeBackwards
+        ba.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
 
         return ba
     }
@@ -350,50 +366,16 @@ extension CustomProgressView {
     /// - return: The CFTimeInterval to be used for the animation
     private func angleRotationDuration(fromAngle: CGFloat, toAngle: CGFloat) -> CFTimeInterval {
         let deltaAngle = abs(toAngle - fromAngle)
-        let numberRotations = deltaAngle / CGFloat(2 * M_PI)
-        let time = CGFloat(rotationDuration) * numberRotations
         
-        return CFTimeInterval(time)
-    }
-
-
-    /// A private method used to calculate the proper animation duration for the
-    /// arc animation.
-    ///
-    /// - parameter fromStroke: The current value of the strokeEnd CAShapeLayer property
-    /// - parameter toStroke: What new new setting of the strokeEnd CAShapeLayer property
-    /// - return: The CFTimeInterval to be used for the animation
-    private func arcRotationDuration(fromStroke: CGFloat, toStroke: CGFloat) -> CFTimeInterval {
-        let delta = abs(toStroke - fromStroke)
-        let time = CGFloat(rotationDuration) * delta
-        
-        return CFTimeInterval(time)
-    }
-
-
-    /// A private method used to calculate the proper media time to start the
-    /// arc animation
-    ///
-    /// - parameter fromStroke: The current value of the strokeEnd CAShapeLayer property
-    /// - parameter toStroke: What new new setting of the strokeEnd CAShapeLayer property
-    /// - parameter fromAngle: The starting angle in radians
-    /// - parameter toAngle: The ending angle in radians.  Can be more then 2*pie in change.
-    /// - return: The upcoming media time to start this animation
-    private func arcBeginTime(fromStroke: CGFloat, toStroke: CGFloat, fromAngle: CGFloat, toAngle: CGFloat) -> CFTimeInterval {
-        let delta = toStroke - fromStroke
-        let time = CGFloat(rotationDuration) * abs(delta)
-        
-        // Positive delta means we are rotating clockwise so we
-        // need to start right away
-        if delta > 0.0 {
-            return 0
+        // Want to use a full rotation time for changes less then one rotation
+        if deltaAngle < CGFloat(M_PI * 2) {
+            return CFTimeInterval(rotationDuration)
+        } else {
+            let numberRotations = deltaAngle / CGFloat(2 * M_PI)
+            let time = CGFloat(rotationDuration) * round(numberRotations)
+            
+            return CFTimeInterval(time)
         }
-        
-        // Rotating counter-clockwise, so we want to delay until
-        // the end cap unwraps to the last loop
-        let delay = angleRotationDuration(fromAngle, toAngle: toAngle) - CFTimeInterval(time)
-
-        return delay + CACurrentMediaTime()
     }
     
 }
