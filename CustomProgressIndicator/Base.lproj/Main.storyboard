@@ -21,18 +21,32 @@
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="kAE-UA-TTo">
                                 <rect key="frame" x="40" y="550" width="520" height="30"/>
                                 <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vQD-eh-Fd4" userLabel="Even More Button">
+                                        <rect key="frame" x="0.0" y="0.0" width="115" height="30"/>
+                                        <state key="normal" title="&lt;&lt;"/>
+                                        <connections>
+                                            <action selector="evenMoreProgress:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2dH-Px-Y14"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0gk-Sf-Tmb">
-                                        <rect key="frame" x="0.0" y="0.0" width="250" height="30"/>
+                                        <rect key="frame" x="135" y="0.0" width="115" height="30"/>
                                         <state key="normal" title="More"/>
                                         <connections>
                                             <action selector="moreProgress:" destination="BYZ-38-t0r" eventType="touchUpInside" id="e2B-Ju-F8n"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E07-IH-C7w">
-                                        <rect key="frame" x="270" y="0.0" width="250" height="30"/>
+                                        <rect key="frame" x="270" y="0.0" width="115" height="30"/>
                                         <state key="normal" title="Less"/>
                                         <connections>
                                             <action selector="lessProgress:" destination="BYZ-38-t0r" eventType="touchUpInside" id="NKR-nl-qcm"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x8l-Ji-oHx" userLabel="Even Less Button">
+                                        <rect key="frame" x="405" y="0.0" width="115" height="30"/>
+                                        <state key="normal" title="&gt;&gt;"/>
+                                        <connections>
+                                            <action selector="evenLessProgress:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bbH-LZ-mcE"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -62,7 +76,13 @@
                                         <color key="value" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="rotationDuration">
-                                        <real key="value" value="1.5"/>
+                                        <real key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="numberRotations">
+                                        <real key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="animationDelay">
+                                        <real key="value" value="0.10000000000000001"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
