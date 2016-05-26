@@ -43,6 +43,8 @@ class CustomProgressView: UIView {
         didSet {
             if progress < 0.0 {
                 progress = 0.0
+            } else if progress > numberRotations {
+                progress = numberRotations
             }
             
             updateLayerProgress()
@@ -70,6 +72,15 @@ class CustomProgressView: UIView {
         }
     }
 
+    
+    /// This property controls the amount of inset the ring should have
+    @IBInspectable var ringInset: CGFloat = 0.0 {
+        didSet {
+            startLayer.path = endCapPath().CGPath
+            endLayer.path = endCapPath().CGPath
+            arcLayer.path = circlePath().CGPath
+        }
+    }
 
     /// The radius of the end cap shadow is controlled through
     /// this property.
@@ -265,16 +276,16 @@ class CustomProgressView: UIView {
     private func circleRadius() -> CGFloat {
         let rect = circleFrame()
 
-        return min(rect.width, rect.height) / 2.0 - lineWidth
+        return min(rect.width, rect.height) / 2.0 - lineWidth - ringInset
     }
 
     
     /// A utility method that returns the center of the circle.  This assumes
     /// that the view is square.
     ///
-    /// - resturns: A CGPoint to use as the center point of the circle
+    /// - returns: A CGPoint to use as the center point of the circle
     private func circleCenter() -> CGPoint {
-        let radius = circleRadius() + lineWidth
+        let radius = circleRadius() + lineWidth + ringInset
         return CGPointMake(radius, radius)
     }
 
