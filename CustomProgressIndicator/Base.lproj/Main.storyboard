@@ -51,11 +51,11 @@
                                     </button>
                                 </subviews>
                             </stackView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fYC-ts-vBu" customClass="CustomProgressView" customModule="CustomProgressIndicator" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="600" height="522"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fYC-ts-vBu" userLabel="Outer Ring" customClass="CustomProgressView" customModule="CustomProgressIndicator" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="40" width="600" height="502"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="color">
-                                        <color key="value" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="value" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="lineWidth">
                                         <real key="value" value="40"/>
@@ -86,22 +86,118 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vtk-aP-F7d" userLabel="Middle Ring" customClass="CustomProgressView" customModule="CustomProgressIndicator" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="40" width="600" height="502"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                        <color key="value" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="lineWidth">
+                                        <real key="value" value="40"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="progress">
+                                        <real key="value" value="0.0"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="shadowRadius">
+                                        <real key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="size" keyPath="shadowOffset">
+                                        <size key="value" width="10" height="0.0"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="shadowOpacity">
+                                        <real key="value" value="0.59999999999999998"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="shadowColor">
+                                        <color key="value" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="rotationDuration">
+                                        <real key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="numberRotations">
+                                        <real key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="animationDelay">
+                                        <real key="value" value="0.10000000000000001"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="ringInset">
+                                        <real key="value" value="42"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UUj-uM-QzO" userLabel="Inner Ring" customClass="CustomProgressView" customModule="CustomProgressIndicator" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="40" width="600" height="502"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                        <color key="value" red="0.0" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="lineWidth">
+                                        <real key="value" value="40"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="progress">
+                                        <real key="value" value="0.0"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="shadowRadius">
+                                        <real key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="size" keyPath="shadowOffset">
+                                        <size key="value" width="10" height="0.0"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="shadowOpacity">
+                                        <real key="value" value="0.59999999999999998"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="shadowColor">
+                                        <color key="value" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="rotationDuration">
+                                        <real key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="numberRotations">
+                                        <real key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="animationDelay">
+                                        <real key="value" value="0.10000000000000001"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="ringInset">
+                                        <real key="value" value="84"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="kAE-UA-TTo" firstAttribute="top" secondItem="vtk-aP-F7d" secondAttribute="bottom" constant="8" id="27Y-bp-Pht"/>
+                            <constraint firstItem="vtk-aP-F7d" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-20" id="30B-oa-8MN"/>
+                            <constraint firstItem="fYC-ts-vBu" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="3ld-xr-wX2"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="UUj-uM-QzO" secondAttribute="trailing" constant="-20" id="5bt-tB-S45"/>
                             <constraint firstAttribute="trailingMargin" secondItem="fYC-ts-vBu" secondAttribute="trailing" constant="-20" id="6Yr-fm-V4l"/>
+                            <constraint firstItem="kAE-UA-TTo" firstAttribute="top" secondItem="UUj-uM-QzO" secondAttribute="bottom" constant="8" id="Ox5-lL-hIb"/>
                             <constraint firstItem="kAE-UA-TTo" firstAttribute="top" secondItem="fYC-ts-vBu" secondAttribute="bottom" constant="8" id="PQi-J3-phU"/>
+                            <constraint firstItem="UUj-uM-QzO" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-20" id="SZU-xP-tGF"/>
+                            <constraint firstItem="vtk-aP-F7d" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="a9z-rX-UKN"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="UUj-uM-QzO" secondAttribute="bottom" constant="8" id="d4d-RU-znN"/>
                             <constraint firstItem="fYC-ts-vBu" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="20" id="faE-VJ-6D9"/>
                             <constraint firstItem="fYC-ts-vBu" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-20" id="j8f-XV-k7k"/>
                             <constraint firstItem="kAE-UA-TTo" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="20" id="nIg-eL-Zbc"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="vtk-aP-F7d" secondAttribute="trailing" constant="-20" id="oP0-0F-eMk"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="vtk-aP-F7d" secondAttribute="bottom" constant="8" id="p4T-NT-yCe"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="kAE-UA-TTo" secondAttribute="bottom" constant="20" id="qkH-Jx-xi0"/>
+                            <constraint firstItem="UUj-uM-QzO" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="rz0-T9-WFx"/>
                             <constraint firstAttribute="trailingMargin" secondItem="kAE-UA-TTo" secondAttribute="trailing" constant="20" id="uEJ-xf-jcU"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="faE-VJ-6D9"/>
+                                <exclude reference="d4d-RU-znN"/>
+                                <exclude reference="p4T-NT-yCe"/>
+                            </mask>
+                        </variation>
                     </view>
                     <connections>
+                        <outlet property="innerRing" destination="UUj-uM-QzO" id="Ene-qh-Ibe"/>
                         <outlet property="lessButton" destination="E07-IH-C7w" id="BRC-cQ-V8D"/>
+                        <outlet property="middleRing" destination="vtk-aP-F7d" id="C49-RD-BOX"/>
                         <outlet property="moreButton" destination="0gk-Sf-Tmb" id="Lx2-r8-qgT"/>
-                        <outlet property="progressView" destination="fYC-ts-vBu" id="IcO-hA-gH4"/>
+                        <outlet property="outerRing" destination="fYC-ts-vBu" id="BSz-Xa-3V0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
