@@ -26,14 +26,19 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    @IBOutlet weak var progressView: CustomProgressView!
+   
+    @IBOutlet weak var outerRing: CustomProgressView!
+    @IBOutlet weak var middleRing: CustomProgressView!
+    @IBOutlet weak var innerRing: CustomProgressView!
     @IBOutlet weak var moreButton: UIButton!
     @IBOutlet weak var lessButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        progressView.progress = 0.0
+        outerRing.progress = 0.0
+        middleRing.progress = 0.0
+        innerRing.progress = 0.0
     }
 
     override func didReceiveMemoryWarning() {
@@ -42,19 +47,35 @@ class ViewController: UIViewController {
     }
 
     @IBAction func moreProgress(sender: UIButton) {
-        progressView.progress += 0.1
+        outerRing.progress += bumpSmall()
+        middleRing.progress += bumpSmall()
+        innerRing.progress += bumpSmall()
     }
     
     @IBAction func lessProgress(sender: UIButton) {
-        progressView.progress -= 0.1
+        outerRing.progress -= bumpSmall()
+        middleRing.progress -= bumpSmall()
+        innerRing.progress -= bumpSmall()
     }
     
     @IBAction func evenMoreProgress(sender: UIButton) {
-        progressView.progress += 2.0
+        outerRing.progress += bumpLarge()
+        middleRing.progress += bumpLarge()
+        innerRing.progress += bumpLarge()
     }
     
     @IBAction func evenLessProgress(sender: UIButton) {
-        progressView.progress -= 2.0
+        outerRing.progress -= bumpLarge()
+        middleRing.progress -= bumpLarge()
+        innerRing.progress -= bumpLarge()
+    }
+    
+    private func bumpSmall() -> CGFloat {
+        return CGFloat(drand48()) / 10.0
+    }
+    
+    private func bumpLarge() -> CGFloat {
+        return 2.0 * CGFloat(drand48())
     }
 }
 
