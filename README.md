@@ -1,4 +1,4 @@
-# CustomProgressIndicator
+# Apple Watch Activity Custom Progress Indicator
 
 The Apple Watch shipped with a captivating activity tracker.  The center piece is a really cool spiral animation scheme showing the amount of activity during the day.  This image is also shown on the matching iPhone Activity App.  I have always wanted to see what it would take to implement this myself.  The examples that I see typically use a custom drawRect override, but I always wanted to see what it would take to do with CAShapeLayers.
 
