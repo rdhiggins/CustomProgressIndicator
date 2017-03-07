@@ -46,35 +46,35 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    @IBAction func moreProgress(sender: UIButton) {
+    @IBAction func moreProgress(_ sender: UIButton) {
         outerRing.progress += bumpSmall()
         middleRing.progress += bumpSmall()
         innerRing.progress += bumpSmall()
     }
     
-    @IBAction func lessProgress(sender: UIButton) {
+    @IBAction func lessProgress(_ sender: UIButton) {
         outerRing.progress -= bumpSmall()
         middleRing.progress -= bumpSmall()
         innerRing.progress -= bumpSmall()
     }
     
-    @IBAction func evenMoreProgress(sender: UIButton) {
+    @IBAction func evenMoreProgress(_ sender: UIButton) {
         outerRing.progress += bumpLarge()
         middleRing.progress += bumpLarge()
         innerRing.progress += bumpLarge()
     }
     
-    @IBAction func evenLessProgress(sender: UIButton) {
+    @IBAction func evenLessProgress(_ sender: UIButton) {
         outerRing.progress -= bumpLarge()
         middleRing.progress -= bumpLarge()
         innerRing.progress -= bumpLarge()
     }
     
-    private func bumpSmall() -> CGFloat {
+    fileprivate func bumpSmall() -> CGFloat {
         return CGFloat(drand48()) / 10.0
     }
     
-    private func bumpLarge() -> CGFloat {
+    fileprivate func bumpLarge() -> CGFloat {
         return 2.0 * CGFloat(drand48())
     }
 }
